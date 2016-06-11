@@ -1,7 +1,8 @@
-nbproject/private/
-build/
-nbbuild/
-dist/
-nbdist/
-nbactions.xml
+/ToninBot/build/
+/ToninBot/nbbuild/
+/ToninBot/dist/
+/ToninBot/nbdist/
+/ToninBot/nbactions.xml
 .nb-gradle/
+/ToninBot/nbproject/private/
+/ToninBot/src/toninbot/Credenciales.java 
