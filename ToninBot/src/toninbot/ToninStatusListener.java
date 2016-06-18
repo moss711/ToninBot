@@ -6,8 +6,10 @@
 
 package toninbot;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import twitter4j.StallWarning;
@@ -28,6 +30,8 @@ import twitter4j.conf.ConfigurationBuilder;
  */
 public class ToninStatusListener implements StatusListener{
     private Twitter twitter;
+    private Random randomGenerator;
+    private ArrayList<String> respuestas;
 
     public ToninStatusListener() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
@@ -40,30 +44,47 @@ public class ToninStatusListener implements StatusListener{
         TwitterFactory twFactory = new TwitterFactory(configuration);
         twitter = twFactory.getInstance();
         twitter.setOAuthAccessToken(accessToken);
+        
+        randomGenerator = new Random();
+        
+        
+        //La lista de tweets
+        respuestas = new ArrayList();
+        respuestas.add("Fora de horario! Este tweet esta fora de horario!");
+        respuestas.add("Eeeeh!! Estas fora de horario!");
+        respuestas.add("FORA DE HORARIO!");
     }
     
-    
+    private String respuestaRandom(){
+        int index=randomGenerator.nextInt(respuestas.size());
+        return respuestas.get(index);
+    }
 
     @Override
-    public void onStatus(Status arg0) {
-        if (arg0.getUser().getId()!=184742273L && arg0.getUser().getId()!=2841338087L){
+    public void onStatus(Status tweetRecibido) {
+        if (tweetRecibido.getUser().getId()!=184742273L && tweetRecibido.getUser().getId()!=2841338087L){
             return;
         }
-        System.out.println(arg0.getUser().getName()+" "+arg0.getText());
+        System.out.println(tweetRecibido.getUser().getName()+" "+tweetRecibido.getText());
         Calendar cal = Calendar.getInstance();
-        cal.setTime(arg0.getCreatedAt());
+        cal.setTime(tweetRecibido.getCreatedAt());
         long hora=cal.get(Calendar.HOUR_OF_DAY);
         System.out.println("Hora: "+cal.get(Calendar.HOUR_OF_DAY));
         
-        if (hora>7){
+        //comprobar la hora
+        if (hora>7||hora<1){
             return;
         }
         
-        String texto="Fora de horario!";
-        StatusUpdate stat= new StatusUpdate("@"+arg0.getUser().getScreenName()+" "+texto);
+        //comprobar que no sea una respuesta a alguien
+        if(tweetRecibido.getText().contains("@")){
+            return;
+        }
+        
+        StatusUpdate stat= new StatusUpdate("@"+tweetRecibido.getUser().getScreenName()+" "+respuestaRandom());
         System.out.println("Fora de horario!");
 
-        stat.inReplyToStatusId(arg0.getId());
+        stat.inReplyToStatusId(tweetRecibido.getId());
 
         try {
             twitter.updateStatus(stat);

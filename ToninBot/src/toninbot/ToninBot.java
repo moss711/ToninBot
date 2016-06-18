@@ -44,8 +44,8 @@ public class ToninBot {
         twitterStream.addListener(listener);
         
         FilterQuery filtre = new FilterQuery();
-        //filtre.follow(184742273L,2841338087L);//Allegue y proyectoPSIa1
-        filtre.follow(2841338087L);//proyectoPSIa1
+        filtre.follow(184742273L,2841338087L);//Allegue y proyectoPSIa1
+        //filtre.follow(2841338087L);//proyectoPSIa1
         
         
         twitterStream.filter(filtre);
